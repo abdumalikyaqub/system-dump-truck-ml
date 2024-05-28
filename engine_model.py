@@ -1,8 +1,8 @@
 import json
 import pandas as pd
-import model as EngineModel
+import model as Model
 
-model = EngineModel.load_model()
+model = Model.load_engine_model()
 
 targets = ['Normal', 'Failure']
 

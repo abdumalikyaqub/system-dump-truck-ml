@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, abort, make_response, request
-import model as EngineModel
+import numpy as np
 import engine_model as EngineModel
+import tire_model as TireModel
 
 app = Flask(__name__)
 
@@ -8,8 +9,8 @@ app = Flask(__name__)
 def main():
     return '<h2>ML App - Dump Truck Diagnostics</h2>'
 
-@app.route('/engine/api/v1.0/getpred', methods=['GET'])
-def get_task():
+@app.route('/engine/predict', methods=['GET'])
+def engine_predict():
     result = EngineModel.launch_task(request.args.get('rpm'), request.args.get('temperature'), \
                         request.args.get('pressure'), request.args.get('vibration'), 
                         request.args.get('fuel'), request.args.get('speed'),
@@ -17,6 +18,15 @@ def get_task():
 	
     return make_response(jsonify(result), 200)
 
+
+@app.route('/tire/predict', methods=['POST'])
+def tire_predict():
+    data = request.get_json()
+    features = np.array(data['features']).reshape(1, -1)
+    
+    prediction = TireModel.model.predict(features)
+    
+    return jsonify({'prediction': prediction[0]})
 
 @app.errorhandler(404)
 def not_found(error):
