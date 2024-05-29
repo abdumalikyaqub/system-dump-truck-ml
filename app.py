@@ -9,14 +9,15 @@ app = Flask(__name__)
 def main():
     return '<h2>ML App - Dump Truck Diagnostics</h2>'
 
-@app.route('/engine/predict', methods=['GET'])
+@app.route('/engine/predict', methods=['POST'])
 def engine_predict():
-    result = EngineModel.launch_task(request.args.get('rpm'), request.args.get('temperature'), \
-                        request.args.get('pressure'), request.args.get('vibration'), 
-                        request.args.get('fuel'), request.args.get('speed'),
-                        request.args.get('load'),'v1.0')
+    data = request.get_json()
+    result = EngineModel.launch_task(data.get('EngineSpeed'), data.get('EngineTemperature'), \
+                        data.get('EnginePressure'), data.get('EngineVibration'), 
+                        data.get('Fuel'), data.get('Speed'),
+                        data.get('EngineLoad'),'v1.0')
 	
-    return make_response(jsonify(result), 200)
+    return jsonify({'prediction': result})
 
 
 @app.route('/tire/predict', methods=['POST'])
